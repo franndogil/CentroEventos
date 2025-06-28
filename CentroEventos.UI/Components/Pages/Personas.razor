@@ -1,0 +1,305 @@
+@using CentroEventos.Aplicacion.Entidades
+@using CentroEventos.Aplicacion.Enumerativos
+@using CentroEventos.Aplicacion.Servicios
+@using CentroEventos.Aplicacion.CasosDeUso.PersonaCasosDeUso
+@page "/personas"
+@rendermode InteractiveServer
+@inject NavigationManager nav
+@inject Sesion sesion
+@inject ListarPersonaUseCase listarPersona
+@inject ModificacionPersonaUseCase modificarPersona
+@inject BajaPersonaUseCase bajaPersona
+@inject AltaPersonaUseCase altaPersona
+
+<PageTitle>Gestion Personas - Centro Eventos</PageTitle>
+
+@if (!string.IsNullOrEmpty(mensajeError))
+{
+    <div class="alert alert-danger fs-5">@mensajeError</div>
+}
+
+@if (!sesion.isLogin())
+{
+    <div class="text-center mt-4">
+        <p>Bienvenido/a. Iniciá sesión o registrate para continuar.</p>
+        <button class="btn btn-primary me-2" @onclick='() => nav.NavigateTo("/login")'>Iniciar Sesión</button>
+        <button class="btn btn-secondary" @onclick='() => nav.NavigateTo("/register")'>Registrarse</button>
+    </div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-4 g-4 mt-4">
+         <table class="table table-bordered table-striped mt-4">
+        <thead class="table-dark">
+            <tr>
+                <th>Id</th>
+                <th>Dni</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Email</th>
+                <th>Telefono</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var persona in _personas)
+            {
+                <tr>
+                    <td>@persona.Id</td>
+                    <td>@persona.Dni</td>
+                    <td>@persona.Nombre</td>
+                    <td>@persona.Apellido</td>
+                    <td>@persona.Email</td>
+                    <td>@persona.Telefono</td>
+                    <td style="width: 140px;">
+                        @if (sesion.UsuarioActual!.Permisos.Contains(Permiso.PersonaModificacion))
+                        {
+                            <button class="btn btn-sm btn-warning me-1" @onclick="() => AbrirEditar(persona)">Editar</button>
+                        }
+                        @if (sesion.UsuarioActual.Permisos.Contains(Permiso.PersonaBaja))
+                        {
+                            <button class="btn btn-sm btn-danger" @onclick="() => AbrirEliminar(persona)">Eliminar</button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (sesion.UsuarioActual!.Permisos.Contains(Permiso.PersonaAlta))
+        {
+            <button class="btn btn-success mt-3" @onclick="AbrirAgregar">Agregar persona</button>
+        }
+    </div>
+}
+
+@if (personaSeleccionado is not null && modo == "editar")
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar persona</h5>
+                    <button type="button" class="btn-close" @onclick="CerrarModal"></button>
+                </div>
+                <div class="modal-body">
+                    <form Model="personaSeleccionado" @onsubmit="GuardarCambios">
+                        <div class="mb-3">
+                            <label class="form-label">Dni</label>
+                            <input type="text" class="form-control" @bind="personaSeleccionado.Dni" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nombre</label>
+                            <input type="text" class="form-control" @bind="personaSeleccionado.Nombre" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Apellido</label>
+                            <input type="text" class="form-control" @bind="personaSeleccionado.Apellido" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="text" class="form-control" @bind="personaSeleccionado.Email" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Telefono</label>
+                            <input type="text" class="form-control" @bind="personaSeleccionado.Telefono" />
+                        </div>
+                        <div class="text-end">
+                            <button class="btn btn-secondary me-2" type="button" @onclick="CerrarModal">Cancelar</button>
+                            <button class="btn btn-primary" type="submit">Guardar cambios</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (personaSeleccionado is not null && modo == "eliminar")
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Confirmar Eliminación</h5>
+                    <button type="button" class="btn-close" @onclick="CerrarModal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Estás seguro de que querés eliminar a <strong>@personaSeleccionado.Nombre</strong>?</p>
+                </div>
+                <div class="modal-footer">
+                <button class="btn btn-danger" @onclick="EliminarPersona">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (personaSeleccionado is not null && modo == "agregar")
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Agregar persona</h5>
+                    <button type="button" class="btn-close" @onclick="CerrarModal"></button>
+                </div>
+                <div class="modal-body">
+                    <form Model="personaSeleccionado" @onsubmit="agregarPersona">
+                        <div class="mb-3">
+                            <label class="form-label">Dni</label>
+                            <input type="text" class="form-control" @bind="personaSeleccionado.Dni" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nombre</label>
+                            <input type="text" class="form-control" @bind="personaSeleccionado.Nombre" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Apellido</label>
+                            <input type="text" class="form-control" @bind="personaSeleccionado.Apellido" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="text" class="form-control" @bind="personaSeleccionado.Email" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Telefono</label>
+                            <input type="text" class="form-control" @bind="personaSeleccionado.Telefono" />
+                        </div>
+                        <div class="text-end">
+                            <button class="btn btn-secondary me-2" type="button" @onclick="CerrarModal">Cancelar</button>
+                            <button class="btn btn-primary" type="submit">Guardar cambios</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code
+{
+    private List<Persona> _personas = new List<Persona>();
+    private Persona? personaSeleccionado = new Persona();
+    private string? modo;
+    private HashSet<Permiso> permisosSeleccionados = new();
+    protected override void OnInitialized()
+    {
+        try 
+        {
+            _personas = listarPersona.Ejecutar();
+        }
+        catch (Exception err)
+        {
+            mensajeError = err.Message;
+            _ = LimpiarMensajeErrorAsync();
+        }
+    }
+    void AbrirEditar(Persona p)
+    {
+        personaSeleccionado = new Persona
+        {
+            Id = p.Id,
+            Dni = p.Dni,
+            Nombre = p.Nombre,
+            Apellido = p.Apellido,
+            Email = p.Email,
+            Telefono = p.Telefono
+        };
+        modo = "editar";
+    }
+    void GuardarCambios()
+    {
+        if (personaSeleccionado is null) return;
+
+        try
+        {
+            modificarPersona.Ejecutar(personaSeleccionado, sesion.UsuarioActual!);
+        }
+        catch (Exception err)
+        {
+            mensajeError = err.Message;
+            _ = LimpiarMensajeErrorAsync();
+        }
+        try
+        {
+            _personas = listarPersona.Ejecutar();
+        }
+        catch (Exception err)
+        {
+            mensajeError = err.Message;
+            _ = LimpiarMensajeErrorAsync();
+        }
+        CerrarModal();
+    }
+    void AbrirEliminar(Persona p)
+    {
+        personaSeleccionado = p;
+        modo = "eliminar";
+    }
+    void AbrirAgregar()
+    {
+        personaSeleccionado = new Persona();
+        modo = "agregar";
+    }
+    void CerrarModal()
+    {
+        personaSeleccionado = null;
+        modo = null;
+    }
+
+    void EliminarPersona()
+    {
+        try
+        {
+            bajaPersona.Ejecutar(personaSeleccionado!.Id, sesion.UsuarioActual!);
+        }
+        catch (Exception err)
+        {
+            mensajeError = err.Message;
+            _ = LimpiarMensajeErrorAsync();
+        }
+        try
+        {
+            _personas = listarPersona.Ejecutar();
+        }
+        catch (Exception err)
+        {
+            mensajeError = err.Message;
+            _ = LimpiarMensajeErrorAsync();
+        }
+        CerrarModal();
+    }
+
+    void agregarPersona()
+    {
+        try
+        {
+            altaPersona.Ejecutar(personaSeleccionado!,sesion.UsuarioActual!);
+            
+        }
+        catch (Exception err)
+        {
+            mensajeError = err.Message;
+            _ = LimpiarMensajeErrorAsync();
+        }
+        try
+        {
+            _personas = listarPersona.Ejecutar();
+        }
+        catch (Exception err)
+        {
+            mensajeError = err.Message;
+            _ = LimpiarMensajeErrorAsync();
+        }
+        CerrarModal();
+    }
+
+    private string? mensajeError;
+
+    private async Task LimpiarMensajeErrorAsync()
+    {
+        await Task.Delay(3000); // 3 segundos
+        mensajeError = null;
+        StateHasChanged();
+    }
+}
