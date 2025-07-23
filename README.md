@@ -4,7 +4,58 @@ CentroEventos es una aplicación web de gestión de reservas para eventos deport
 
 ---
 
-## 📝 Descripción
+## Guía de prueba
+
+**Autores**: Conejera Juan Pablo, Dogil Franco Matías, Brizzi Matías  
+**Cátedra**: Seminario de Lenguajes – .NET – 1er Semestre 2025  
+**Fecha**: 21 de mayo de 2025  
+
+---
+
+## Requisitos previos
+
+- Tener instalado SDK de .NET 8.0  
+- Sistema operativo con terminal  
+- Descargar desde: https://dotnet.microsoft.com/en-us/download/dotnet/8.0
+
+---
+
+## Estructura del proyecto
+
+```
+CentroEventos/
+├── CentroEventos.Aplicacion/
+│   ├── CasosDeUso/
+│   │   ├── EventoDeportivoCasosDeUso/
+│   │   ├── PersonaCasosDeUso/
+│   │   └── ReservaCasosDeUso/
+│   ├── Entidades/
+│   ├── Enumerativos/
+│   ├── Excepciones/
+│   ├── Interfaces/
+│   └── Validadores/
+├── CentroEventos.UI/
+└── CentroEventos.Repositorios/
+```
+
+---
+
+## Pasos para ejecutar
+
+1. Descomprimir el archivo .ZIP  
+2. Abrir una terminal en la carpeta `CentroEventos/CentroEventos.UI`  
+3. Ejecutar para compilar:
+    ```bash
+    dotnet build
+    ```
+4. Ejecutar el programa:
+    ```bash
+    dotnet run
+    ```
+
+---
+
+## Descripción
 
 La plataforma permite a organizadores de eventos deportivos crear y gestionar eventos, y a usuarios registrarse y reservar entradas de manera ágil y segura.
 
@@ -17,7 +68,7 @@ La plataforma permite a organizadores de eventos deportivos crear y gestionar ev
 
 ---
 
-## 🚀 Tecnologías
+## Tecnologías
 
 - **Back-end:** C#, .NET 8.0, ASP.NET Core  
 - **Front-end:** Blazor Server  
@@ -30,25 +81,7 @@ La plataforma permite a organizadores de eventos deportivos crear y gestionar ev
 
 ---
 
-## 📱 Uso
-
-Para ejecutar la aplicación localmente:
-
-```bash
-cd CentroEventos.UI
-
-dotnet run
-```
-
-## 🛠️ Estructura del proyecto
-CentroEventos
-```bash
-├── CentroEventos.Aplicacion # Lógica de negocio y casos de uso
-├── CentroEventos.Repositorios # Implementación de repositorios con EF Core
-└── CentroEventos.UI # Front‑end Blazor Server
-```
-
-## 🤝 Contribuciones
+## Contribuciones
 
 ¡Todas las contribuciones son bienvenidas! Para contribuir:
 
