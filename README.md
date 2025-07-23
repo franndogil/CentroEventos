@@ -45,7 +45,6 @@ CentroEventos
 ```bash
 ├── CentroEventos.Aplicacion # Lógica de negocio y casos de uso
 ├── CentroEventos.Repositorios # Implementación de repositorios con EF Core
-├── CentroEventos.Sqlite # Inicialización y migraciones de la base de datos
 └── CentroEventos.UI # Front‑end Blazor Server
 ```
 
