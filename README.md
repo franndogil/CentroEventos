@@ -78,7 +78,7 @@ La plataforma permite a organizadores de eventos deportivos crear y gestionar ev
 ## Tecnologías utilizadas
 
 - **Back-end:** C#, .NET 8.0, ASP.NET Core  
-- **Front-end:** Blazor Server  
+- **Front-end:** Blazor Server (Razor pages)
 - **ORM:** Entity Framework Core  
 - **Consultas:** LINQ  
 - **Base de datos:** SQLite  
