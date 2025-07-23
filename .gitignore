@@ -1,0 +1,7 @@
+obj/
+bin/
+.git
+reservas.txt
+personas.txt
+eventos.txt
+CentroDeportivo.sqlite

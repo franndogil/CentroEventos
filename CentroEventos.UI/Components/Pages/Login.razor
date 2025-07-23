@@ -1,0 +1,55 @@
+@using CentroEventos.Aplicacion.CasosDeUso.UsuarioCasosDeUso
+@using CentroEventos.Aplicacion.Servicios
+@using CentroEventos.Aplicacion.Entidades
+@page "/login"
+@rendermode InteractiveServer
+@inject NavigationManager nav
+@inject LoginUseCase loginUseCase
+@inject AltaUsuarioUseCase altaUsuarioUseCase
+@inject Sesion sesion
+
+<PageTitle>Log in - Centro de Eventos</PageTitle>
+
+@if (!string.IsNullOrEmpty(mensajeError))
+{
+    <div class="alert alert-danger fs-5">@mensajeError</div>
+}
+
+<h3>Iniciar Sesion</h3>
+
+<form @onsubmit="IniciarSesion">
+    <label for="email">Usuario</label>
+    <input type="text" id="email" name="email" placeholder="email" @bind="_email" >
+    <label for="password">Contraseña</label>
+    <input type="password" id="password" name="password" placeholder="contraseña" @bind="_password">
+    <button class="btn btn-primary"type="submit">Aceptar</button>
+</form>
+<a class="btn btn-secondary " href="/register">Registrarse</a>
+
+@code {
+    private string _email = "";
+    private string _password = "";
+    
+    private void IniciarSesion()
+    {
+        try {
+            var u = loginUseCase.Ejecutar(_email,_password);
+            sesion.GuardarSesion(u);
+            nav.NavigateTo("/", true);
+            StateHasChanged();
+        } 
+        catch (Exception err)
+        {
+            mensajeError = err.Message;
+            _ = LimpiarMensajeErrorAsync();
+        }
+    }
+    private string? mensajeError;
+
+    private async Task LimpiarMensajeErrorAsync()
+    {
+        await Task.Delay(3000); // 3 segundos
+        mensajeError = null;
+        StateHasChanged();
+    }
+}
