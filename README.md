@@ -36,6 +36,11 @@ CentroEventos/
 │   ├── Servicios/
 │   └── Validadores/
 ├── CentroEventos.UI/
+│   ├── Components/
+│   │   └── Pages/
+│   ├── Properties/
+│   └── wwwroot/
+│       └── bootstrap/
 └── CentroEventos.Repositorios/
     └── utils/
 ```
