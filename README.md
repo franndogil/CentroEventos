@@ -1,4 +1,4 @@
-#**CentroEventos**
+# **CentroEventos**
 
 CentroEventos es una aplicación web de gestión de reservas para eventos deportivos, desarrollada con tecnologías .NET y enfocada en buenas prácticas de programación, arquitectura limpia y experiencia de usuario.
 
