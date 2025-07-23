@@ -38,6 +38,7 @@ Para ejecutar la aplicación localmente:
 cd CentroEventos.UI
 
 dotnet run
+```
 
 ## 🛠️ Estructura del proyecto
 CentroEventos
