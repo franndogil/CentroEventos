@@ -47,3 +47,11 @@ CentroEventos
 ├── CentroEventos.Sqlite # Inicialización y migraciones de la base de datos
 └── CentroEventos.UI # Front‑end Blazor Server
 
+## 🤝 Contribuciones
+
+¡Todas las contribuciones son bienvenidas! Para contribuir:
+
+1. Haz un **fork** del repositorio.  
+2. Crea una rama con tu feature: `git checkout -b feature/nombre`.  
+3. Realiza tus cambios y haz **commit**.  
+4. Envía un **pull request** describiendo tu aporte.  
