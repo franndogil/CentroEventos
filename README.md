@@ -33,9 +33,11 @@ CentroEventos/
 │   ├── Enumerativos/
 │   ├── Excepciones/
 │   ├── Interfaces/
+│   ├── Servicios/
 │   └── Validadores/
 ├── CentroEventos.UI/
 └── CentroEventos.Repositorios/
+    └── utils/
 ```
 
 ---
